@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
-import FileUpload from '@/components/FileUpload'
+import FileUploader from '@/components/FileUploader'
 
 Vue.use(Router)
 
@@ -14,8 +14,8 @@ export default new Router({
     },
     {
       path: '/form',
-      name: 'FileUpload',
-      component: FileUpload
+      name: 'FileUploader',
+      component: FileUploader
     }
   ]
 })

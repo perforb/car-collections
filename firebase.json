@@ -26,7 +26,7 @@
     "rewrites": [
       {
         "source": "/upload",
-        "function": "fileupload"
+        "function": "uploadImage"
       },
       {
         "source": "**",

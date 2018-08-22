@@ -1,14 +1,14 @@
 <template>
   <div class="upload">
-    <h1>File Upload</h1>
+    <h1>File Uploader</h1>
     <div>
       <form>
         <input type="file" @change="onFileSelected">
         <button @click.prevent="onUpload">Upload</button>
       </form>
       <div class="progress">
-        <p>upload progress</p>
-        <p>{{ uploadProgress }}</p>
+        <p>Progress:</p>
+        <p>{{ progress }}</p>
       </div>
     </div>
   </div>
@@ -23,11 +23,11 @@ const instance = axios.create({
 })
 
 export default {
-  name: 'FileUploadForm',
+  name: 'FileUploader',
   data () {
     return {
       selectedFile: null,
-      uploadProgress: '0%'
+      progress: '0%'
     }
   },
   methods: {
@@ -35,22 +35,20 @@ export default {
       this.selectedFile = event.target.files[0]
     },
     onUpload () {
-      const fd = new FormData()
-      fd.append('file', this.selectedFile, this.selectedFile.name)
+      const form = new FormData()
+      form.append('file', this.selectedFile, this.selectedFile.name)
       instance
-        .post('/upload', fd, {
-          onUploadProgress: uploadEvent => {
-            const progress =
-              Math.round(uploadEvent.loaded / uploadEvent.total * 100) + '%'
-            this.uploadProgress = progress
+        .post('/upload', form, {
+          onUploadProgress: event => {
+            this.progress = Math.round(event.loaded / event.total * 100) + '%'
           }
         })
         .then(res => {
-          this.uploadProgress = 'upload completed'
+          this.progress = 'Completed!'
         })
         .catch(err => {
           console.error(err)
-          this.uploadProgress = 'upload error'
+          this.progress = 'An error occurred when uploading a file...'
         })
     }
   }
