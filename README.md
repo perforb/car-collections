@@ -1,6 +1,6 @@
 # car-collections
 
-> A Vue.js project
+This is a sample project using Firebase with Cloud Functions.
 
 ## Build Setup
 
