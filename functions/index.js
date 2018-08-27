@@ -14,15 +14,29 @@ const bucketName = functions.config().carcollections.bucket.name;
 const bucket = storage.bucket(bucketName);
 
 exports.status = functions.https.onRequest((req, res) => {
+  const numberWithCommas = function(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  const calculator = function(bytes) {
+    if (bytes <= 0) {
+      return `0 Bytes`;
+    }
+    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB', 'BB'];
+    const i = parseInt(Math.log(bytes) / Math.log(1024));
+    return `${Math.round(bytes / Math.pow(1024, i), 2)} ${units[i]} (${numberWithCommas(bytes)} Bytes)`;
+  };
   const status = `
-platform:   ${os.platform()}
-release:    ${os.release()}
-uptime:     ${os.uptime()}
-process:    ${process.title}
-currentDir: ${process.cwd()}
-cpuCount:   ${os.cpus().length}
-cpu:        ${JSON.stringify(os.cpus(), null, '    ')}
-env:        ${JSON.stringify(process.env, null, '    ')}
+platform: ${os.platform()}
+release:  ${os.release()}
+uptime:   ${os.uptime()}
+process:  ${process.title}
+cwd:      ${process.cwd()}
+freemem:  ${calculator(os.freemem())}
+totalmem: ${calculator(os.totalmem())}
+cpus:     ${os.cpus().length}
+${JSON.stringify(os.cpus(), null, '    ')}
+env:
+${JSON.stringify(process.env, null, '    ')}
 `;
   console.log(status);
   res.status(200).send(status);
