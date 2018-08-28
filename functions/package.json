@@ -11,8 +11,9 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^1.7.0",
+    "@google-cloud/vision": "^0.21.0",
     "busboy": "^0.2.14",
-    "firebase-admin": "~6.0.0",
+    "firebase-admin": "^6.0.0",
     "firebase-functions": "^2.0.3"
   },
   "devDependencies": {
