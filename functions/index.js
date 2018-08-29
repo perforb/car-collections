@@ -5,19 +5,35 @@ const fs = require('fs');
 const path = require('path');
 const process = require('process');
 
+// const Busboy = require('busboy');
+// const functions = require('firebase-functions');
+// const admin = require('firebase-admin');
+
+// const serviceAccount = require("./service-account-credentials.json");
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://car-collections.firebaseio.com",
+//   storageBucket: "car-collections.appspot.com"
+// });
+
+// const bucketName = functions.config().carcollections.bucket.name;
+// const bucket = admin.storage().bucket(bucketName);
+// const vision = require('@google-cloud/vision');
+
+
 const Busboy = require('busboy');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const vision = require('@google-cloud/vision');
-
-const serviceAccount = require("./service-account-credentials.json");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://car-collections.firebaseio.com"
-});
+admin.initializeApp(functions.config().firebase);
 
 const bucketName = functions.config().carcollections.bucket.name;
+// const gcs = require('@google-cloud/storage')({
+//   keyFilename: './service-account-credentials.json',
+// });
+//const bucket = gcs.bucket(bucketName);
 const bucket = admin.storage().bucket(bucketName);
+const vision = require('@google-cloud/vision');
+
 const tempDir = functions.config().carcollections.bucket['temp'] || 'tmp';
 const publicDir = functions.config().carcollections.bucket['public'] || 'images';
 const client = new vision.ImageAnnotatorClient();
@@ -31,7 +47,7 @@ const FILE_CONFIG = {
   expires: '12-31-2999'
 };
 
-const judgment = function(label) {
+const judgment = function (label) {
   const description = label.description.toLocaleLowerCase();
   const score = parseInt(label.score * 100);
   if (!ALLOWED_TAGS.includes(description) || score < BORDER_LINE) {
@@ -80,6 +96,26 @@ exports.moveImage = functions.storage.object().onFinalize((object) => {
   const file = bucket.file(filePath);
   const destination = `${publicDir}/${fileName}`;
 
+  console.log(`Detecting ${bucketName}/${filePath}...`);
+
+  // file.getSignedUrl(FILE_CONFIG)
+  //   .then(signedUrl => {
+  //     console.log(signedUrl);
+  //     const db = admin.firestore();
+  //     const docRef = db.collection('cars').doc('car');
+  //     // promise なので then でやる
+  //     const car = docRef.set({
+  //       path: filePath,
+  //       download_url: signedUrl[0],
+  //       timestamp: new Date().toISOString()
+  //     });
+
+  //     console.log(car);
+  //     return file.move(destination);
+  //   })
+  //   .then(() => console.log(`Moved to ${bucketName}/${destination}`))
+  //   .catch(err => console.log(err));
+
   client.labelDetection(`${bucketName}/${filePath}`)
     .then(results => {
       const labels = results[0].labelAnnotations;
@@ -101,17 +137,18 @@ exports.moveImage = functions.storage.object().onFinalize((object) => {
       console.log(signedUrl);
       const db = admin.firestore();
       const docRef = db.collection('cars').doc('car');
-      const car = docRef.set({
+      return docRef.set({
         path: filePath,
         download_url: signedUrl[0],
         timestamp: new Date().toISOString()
       });
-
-      console.log(car);
+    })
+    .then(docRef => {
+      console.log(docRef);
       return file.move(destination);
     })
     .then(() => console.log(`Moved to ${bucketName}/${destination}`))
-    .catch(err => console.log(err));
+    .catch(err => console.error(err));
 
   return true;
 });
