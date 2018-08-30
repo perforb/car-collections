@@ -13,7 +13,7 @@ export default new Router({
       component: Index
     },
     {
-      path: '/form',
+      path: '/add',
       name: 'FileUploader',
       component: FileUploader
     }

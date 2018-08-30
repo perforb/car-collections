@@ -184,7 +184,8 @@ exports.saveImage = functions.storage.object().onFinalize((object) => {
       const docRef = db.collection('cars').doc(key);
       return docRef.set({
         path: filePath,
-        download_url: signedUrl[0],
+        name: fileName,
+        url: signedUrl[0],
         timestamp: new Date()
       });
     })
