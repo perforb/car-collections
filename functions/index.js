@@ -8,7 +8,7 @@ const Base64 = require('js-base64').Base64;
 const Busboy = require('busboy');
 
 const functions = require('firebase-functions');
-const BUCKET_NAME = functions.config().carcollections.bucket.name;
+const BUCKET_NAME = functions.config().carcollections.bucket['name'];
 const TEMP_DIR = functions.config().carcollections.bucket['temp'] || 'tmp';
 const PUBLIC_DIR = functions.config().carcollections.bucket['public'] || 'images';
 const ALLOWED_MIME_TYPES = ['image/png', 'image/jpg', 'image/jpeg'];
@@ -34,6 +34,8 @@ admin.initializeApp({
 const bucket = admin.storage().bucket(BUCKET_NAME);
 const vision = require('@google-cloud/vision');
 const client = new vision.ImageAnnotatorClient();
+const db = admin.firestore();
+db.settings(FIRE_STORE_SETTINGS);
 
 
 exports.status = functions.https.onRequest((req, res) => {
@@ -177,8 +179,6 @@ exports.saveImage = functions.storage.object().onFinalize((object) => {
   file.getSignedUrl(FILE_CONFIG)
     .then(signedUrl => {
       console.log(signedUrl);
-      const db = admin.firestore();
-      db.settings(FIRE_STORE_SETTINGS);
       const fileName = path.basename(filePath);
       const key = Base64.encode(fileName);
       const docRef = db.collection('cars').doc(key);

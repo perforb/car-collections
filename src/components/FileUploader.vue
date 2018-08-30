@@ -1,6 +1,6 @@
 <template>
   <div class="upload">
-    <h1>File Uploader</h1>
+    <h1>Upload your car picture!</h1>
     <div>
       <form>
         <input type="file" @change="onFileSelected">
@@ -48,7 +48,7 @@ export default {
         })
         .catch(err => {
           console.error(err)
-          this.progress = 'An error occurred when uploading a file...'
+          this.progress = 'Failed to upload your file.'
         })
     }
   }
