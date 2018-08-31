@@ -1,6 +1,6 @@
 # car-collections
 
-This is a sample project using Firebase with Cloud Functions.
+This is a sample project listing car pictures uploaded by some users.
 
 ## Build Setup
 
