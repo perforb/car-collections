@@ -1,21 +1,11 @@
-# car-collections
+# What is this?
 
-This is a sample project listing car pictures uploaded by some users.
+This service provides features such as uploading car photos and listing those.
 
-## Build Setup
+# Why did you create?
 
-``` bash
-# install dependencies
-npm install
+For studying Cloud Function, firebase and Vue.js.
 
-# serve with hot reload at localhost:8080
-npm run dev
+# Architecture
 
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+ ![Architecture](architecture.png) 

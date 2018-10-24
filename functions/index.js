@@ -24,7 +24,7 @@ const FIRE_STORE_SETTINGS = {
 };
 
 const admin = require('firebase-admin');
-const serviceAccount = require('./service-account-credentials.json');
+const serviceAccount = require('./service.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://car-collections.firebaseio.com",
@@ -36,26 +36,6 @@ const vision = require('@google-cloud/vision');
 const client = new vision.ImageAnnotatorClient();
 const db = admin.firestore();
 db.settings(FIRE_STORE_SETTINGS);
-
-
-exports.status = functions.https.onRequest((req, res) => {
-  const status = `
-platform: ${os.platform()}
-release:  ${os.release()}
-uptime:   ${os.uptime()}
-process:  ${process.title}
-cwd:      ${process.cwd()}
-freemem:  ${calculate(os.freemem())}
-totalmem: ${calculate(os.totalmem())}
-cpus:     ${os.cpus().length}
-${JSON.stringify(os.cpus(), null, '    ')}
-env:
-${JSON.stringify(process.env, null, '    ')}
-`;
-
-  console.log(status);
-  res.status(200).send(status);
-});
 
 
 exports.uploadImage = functions.https.onRequest((req, res) => {

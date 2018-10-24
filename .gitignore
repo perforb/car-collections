@@ -3,7 +3,7 @@ node_modules/
 /dist/
 *.log*
 .firebase
-service-account-credentials.json
+service.json
 
 # Editor directories and files
 .idea
